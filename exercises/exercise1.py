@@ -76,9 +76,9 @@ class AllToAllGossip(Device):
 
             self._secrets = self._secrets.union(ingoing.secrets)
 
-
     def print_result(self):
         print(f'\tDevice {self.index()} got secrets: {self._secrets}')
+
 
 class NeighboursGossip(Device):
 
@@ -104,7 +104,7 @@ class NeighboursGossip(Device):
         initial_direction = self._right_link
         outgoing = GossipMessage(self.index(), initial_direction, self._secrets)
         self.medium().send(outgoing)
-        
+
         # and waits until he gets all the information back
         while len(self._secrets) < self.number_of_devices():
             ingoing = self.medium().receive()
@@ -123,7 +123,6 @@ class NeighboursGossip(Device):
             # and forward them along the ring
             self.forward(ingoing)
 
-
     def forward(self, msg):
         forward_to = self._right_link
 
@@ -131,7 +130,7 @@ class NeighboursGossip(Device):
             forward_to = self._left_link
         # last slave in the line (master's neighbour) reverts the direction
         # this ensures that all secrets are distributed in minimal (2*N-1) number of messages
-        if forward_to == self._master_index and len(msg.secrets) == self.number_of_devices()-1:
+        if forward_to == self._master_index and len(msg.secrets) == self.number_of_devices() - 1:
             self.reply(msg)
         else:
             outgoing = GossipMessage(self.index(), forward_to, self._secrets)
